@@ -62,6 +62,16 @@ function initDashboard() {
     // Event Listeners for Filters
     document.getElementById('search-input').addEventListener('input', renderTable);
     document.getElementById('filter-select').addEventListener('change', renderTable);
+
+    // Sidebar navigation mock
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!item.classList.contains('active')) {
+                alert('This is a mockup link to make the dashboard look like a real app. For the Swym assignment, only the main Risk Dashboard view was required!');
+            }
+        });
+    });
 }
 
 function generateRandomData() {
