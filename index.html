@@ -3,113 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChurnGuard | Merchant Risk Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Merchant Churn Risk Dashboard</title>
+    <meta name="description" content="Dashboard for flagging merchants at risk of churning and recommending next steps.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="dashboard-container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo-container">
-                <i class="fa-solid fa-shield-halved accent-color"></i>
+            <div class="logo">
+                <div class="logo-icon"></div>
                 <h2>ChurnGuard</h2>
             </div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-users"></i> Merchants</a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-bell"></i> Alerts <span class="badge">3</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" class="nav-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Merchants
+                </a>
+                <a href="#" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Recent Activity
+                </a>
             </nav>
-            <div class="user-profile">
-                <div class="avatar">HK</div>
-                <div class="user-info">
-                    <span class="user-name">harsh kumar</span>
-                    <span class="user-role">Admin (RA2311...)</span>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="top-header">
+            <header class="header">
                 <div>
-                    <h1>Risk Assessment</h1>
-                    <p class="subtitle">Identify at-risk merchants and take immediate action.</p>
+                    <h1>Merchant Risk Analysis</h1>
+                    <p class="subtitle">Monitor and prevent merchant churn</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary"><i class="fa-solid fa-download"></i> Export Data</button>
-                    <button class="btn btn-primary" onclick="generateRandomData()"><i class="fa-solid fa-rotate-right"></i> Refresh Data</button>
+                    <div class="stat-badge">
+                        <span id="high-risk-count">0</span> High Risk
+                    </div>
                 </div>
             </header>
 
-            <!-- Summary Cards -->
-            <div class="summary-cards">
-                <div class="card stat-card">
-                    <div class="stat-icon bg-danger-light"><i class="fa-solid fa-triangle-exclamation text-danger"></i></div>
-                    <div class="stat-details">
-                        <h3>High Risk</h3>
-                        <p class="stat-number" id="high-risk-count">0</p>
-                    </div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-icon bg-warning-light"><i class="fa-solid fa-bolt text-warning"></i></div>
-                    <div class="stat-details">
-                        <h3>Medium Risk</h3>
-                        <p class="stat-number" id="medium-risk-count">0</p>
-                    </div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-icon bg-info-light"><i class="fa-solid fa-envelope-open-text text-info"></i></div>
-                    <div class="stat-details">
-                        <h3>Low Risk</h3>
-                        <p class="stat-number" id="low-risk-count">0</p>
-                    </div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-icon bg-success-light"><i class="fa-solid fa-check text-success"></i></div>
-                    <div class="stat-details">
-                        <h3>Healthy</h3>
-                        <p class="stat-number" id="healthy-count">0</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Data Table -->
-            <div class="card table-container">
+            <div class="table-container">
                 <div class="table-header">
-                    <h2>Merchant Risk Overview</h2>
-                    <div class="table-filters">
-                        <input type="text" id="search-input" placeholder="Search merchants..." class="search-input">
-                        <select id="filter-select" class="filter-select">
-                            <option value="all">All Risks</option>
-                            <option value="High">High Risk</option>
-                            <option value="Medium">Medium Risk</option>
-                            <option value="Low">Low Risk</option>
-                        </select>
+                    <h3>Active Merchants</h3>
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="High">High Risk</button>
+                        <button class="filter-btn" data-filter="Medium">Medium Risk</button>
+                        <button class="filter-btn" data-filter="Low">Low Risk</button>
                     </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Merchant</th>
-                                <th>Plan</th>
-                                <th>Risk Level</th>
-                                <th>Primary Signal</th>
-                                <th>Recommended Next Step</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="merchant-table-body">
-                            <!-- Rows rendered via JS -->
-                        </tbody>
-                    </table>
-                </div>
+                
+                <table class="merchant-table">
+                    <thead>
+                        <tr>
+                            <th>Merchant</th>
+                            <th>Plan & MRR</th>
+                            <th>Health Metrics</th>
+                            <th>Risk Level</th>
+                            <th>Recommended Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="merchant-table-body">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
-    <script src="script.js"></script>
+
+    <!-- JS -->
+    <script src="app.js"></script>
 </body>
 </html>

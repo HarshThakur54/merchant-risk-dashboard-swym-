@@ -1,44 +1,37 @@
-# CX AI-Proficiency Build Round - V1 Spec
+# V1 Spec Doc: Merchant Churn Risk Dashboard
 
-**Applicant Information:**
-- **Name:** harsh kumar
-- **Email:** hk6009@srmist.edu.in
-- **Roll No:** RA2311027010065
+## 1. Problem Statement
+We need a dashboard to identify merchants at risk of churning from our platform and to provide actionable next steps for the Customer Success (CS) team to retain them.
 
-## 1. Merchant Record Shape
-The merchant record simulates a B2B SaaS platform customer. 
+## 2. Merchant Record Shape
+To effectively predict churn, we need a combination of firmographic data, product usage metrics, and support interactions. The mock merchant record will contain:
+- **id**: Unique identifier.
+- **name**: Merchant company name.
+- **planTier**: Basic, Pro, Enterprise.
+- **mrr**: Monthly Recurring Revenue (financial impact).
+- **tenureMonths**: Months since signup.
+- **loginsLast30Days**: Frequency of platform access.
+- **coreFeatureUsage**: A score (0-100) showing how much value they extract.
+- **openSupportTickets**: Number of current unresolved issues.
+- **paymentStatus**: Healthy, Past Due, Expiring Soon.
 
-**Data Schema:**
-- `id`: (String) Unique identifier for the merchant.
-- `name`: (String) Merchant company name.
-- `planTier`: (String) "Basic", "Pro", or "Enterprise".
-- `signupDate`: (Date String) Date the merchant joined.
-- `lastLoginDate`: (Date String) The last time an admin logged in.
-- `supportTicketsOpen`: (Integer) Number of unresolved support tickets.
-- `paymentDeclined`: (Boolean) True if the latest invoice payment failed.
-- `usageDropPercentage`: (Float) Percentage drop in core API/platform usage over the last 30 days compared to the prior 30 days.
+## 3. Churn Risk Signals
+We define risk using a rule-based engine across these metrics:
+- **Usage Drop-off**: `loginsLast30Days` <= 2, or `coreFeatureUsage` < 30.
+- **Support Friction**: `openSupportTickets` >= 3, indicating a frustrating experience.
+- **Financial Risk**: `paymentStatus` is "Past Due" or "Expiring Soon".
+- **Early Churn Risk**: `tenureMonths` <= 3 combined with low usage.
 
-## 2. Churn Signals
-I have identified the following signals as indicators of churn risk:
+**Risk Levels**: High, Medium, Low.
 
-1. **Payment Declined (Involuntary Churn):** If a payment fails and the merchant hasn't updated their billing information, they will be automatically churned when the grace period expires. This is the highest priority risk.
-2. **Usage Drop Percentage (Disengagement):** A significant drop (> 30%) in platform usage indicates the merchant is no longer deriving value from the product, usually a precursor to cancellation.
-3. **High Open Support Tickets (Frustration):** Having > 3 open support tickets indicates technical blockers or poor UX, leading to dissatisfaction and eventual churn.
-4. **Stale Login (Stagnation):** If the merchant hasn't logged in for over 14 days, they are an "at-risk" account due to lack of engagement, especially on higher-tier plans.
+## 4. Recommended Next Steps
+Based on the primary churn signal triggered, the system will recommend:
+- *Signal: Low Usage* -> **Recommendation**: Schedule a re-engagement product walkthrough.
+- *Signal: High Support Tickets* -> **Recommendation**: CS Manager to personally reach out and expedite ticket resolution.
+- *Signal: Payment Risk* -> **Recommendation**: Send automated billing update link.
+- *Signal: Early Churn Risk* -> **Recommendation**: Mandate a 1-on-1 onboarding sync call.
 
-## 3. Data Persistence
-Given no historical data or dataset is provided and no backend is required by the prompt, the merchant data will be generated and persisted entirely **in-memory** within the frontend application using a JavaScript array (`script.js`). The data simulates a fetch from a REST API endpoint.
-
-## 4. Recommended Next Steps Logic
-The dashboard evaluates each merchant's data and recommends exactly one "Next Step" based on the most critical signal present:
-
-- **If `paymentDeclined` is true:** 
-  *Recommendation:* "Send automated billing reminder & link to update payment method." (High Priority)
-- **Else if `usageDropPercentage` > 30:** 
-  *Recommendation:* "Schedule a Customer Success check-in to discuss feature adoption." (Medium Priority)
-- **Else if `supportTicketsOpen` > 3:** 
-  *Recommendation:* "Escalate open tickets to Tier 2 support immediately." (Medium Priority)
-- **Else if `lastLoginDate` > 14 days ago:**
-  *Recommendation:* "Send re-engagement email campaign highlighting new features." (Low Priority)
-- **Else:**
-  *Recommendation:* "Monitor." (Healthy Account)
+## 5. Technical Approach & Persistence
+- **Data Persistence**: For this V1 build, data will be mocked using a static JSON array within the application state to simulate a backend API response. No real database is used.
+- **Frontend**: Vanilla HTML/JS/CSS to ensure a lightweight, fast, and dependency-free application that is easy to audit. The UI will feature a clean, sortable data table highlighting "High Risk" merchants at the top with premium aesthetics.
+- **Deployment**: The repository will be deployed via GitHub Pages for live viewing.
