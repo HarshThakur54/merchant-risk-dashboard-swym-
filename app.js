@@ -40,7 +40,8 @@ function generateDynamicMerchants(count = 25) {
     return merchants;
 }
 
-const MOCK_MERCHANTS = generateDynamicMerchants(25);
+let MOCK_MERCHANTS = generateDynamicMerchants(25);
+let ACTIVITY_LOG = [];
 
 // LOGIC: Evaluate Churn Risk Signals
 function evaluateMerchantRisk(merchant) {
@@ -211,13 +212,33 @@ function renderTable(merchants) {
             
             setTimeout(() => {
                 row.remove();
-                alert(`Action recorded for ${merchantName}. The CS team has been notified.`);
+                
+                // Log activity
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const actionTaken = risk.recommendation;
+                
+                ACTIVITY_LOG.unshift({
+                    time: timeString,
+                    merchant: merchantName,
+                    action: actionTaken
+                });
+                
+                // Remove from global state
+                MOCK_MERCHANTS = MOCK_MERCHANTS.filter(m => m.name !== merchantName);
+
+                // Update views
+                renderRecentActivity();
+                renderMerchantsGrid();
                 
                 // Update high risk count if we removed a high risk merchant
                 if (row.querySelector('.risk-High')) {
                     const countEl = document.getElementById('high-risk-count');
                     countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
                 }
+                
+                // Optional: alert can be removed since we have the activity feed now, 
+                // but keeping it small or just letting the feed handle it.
             }, 300);
         });
     });
@@ -245,15 +266,82 @@ function applyFilter(filterLevel) {
     renderTable(filteredData);
 }
 
-// INITIALIZE
+// NEW VIEWS RENDERING
+function renderMerchantsGrid() {
+    const grid = document.getElementById('merchants-grid-body');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    MOCK_MERCHANTS.forEach(merchant => {
+        const card = document.createElement('div');
+        card.className = 'merchant-card';
+        card.innerHTML = `
+            <div class="name">${merchant.name}</div>
+            <div class="id">${merchant.id} • ${merchant.tenureMonths} mo tenure</div>
+            <div class="plan">${merchant.planTier} • ${formatCurrency(merchant.mrr)}/mo</div>
+            <div class="stats">
+                <div>Logins (30d)<strong>${merchant.loginsLast30Days}</strong></div>
+                <div>Feature Score<strong>${merchant.coreFeatureUsage}/100</strong></div>
+                <div>Support Tickets<strong>${merchant.openSupportTickets}</strong></div>
+                <div>Billing Status<strong>${merchant.paymentStatus}</strong></div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderRecentActivity() {
+    const feed = document.getElementById('activity-feed-body');
+    if (!feed) return;
+    
+    feed.innerHTML = '';
+    
+    if (ACTIVITY_LOG.length === 0) {
+        feed.innerHTML = `<div class="empty-state">No recent activity. Actions taken on the dashboard will appear here.</div>`;
+        return;
+    }
+    
+    ACTIVITY_LOG.forEach(log => {
+        const item = document.createElement('div');
+        item.className = 'activity-item';
+        item.innerHTML = `
+            <div class="activity-time">${log.time}</div>
+            <div class="activity-title">Action taken for ${log.merchant}</div>
+            <div class="activity-desc">${log.action}</div>
+        `;
+        feed.appendChild(item);
+    });
+}
+
+// INITIALIZE & SPA NAVIGATION
 document.addEventListener('DOMContentLoaded', () => {
-    // Add Event Listeners for filters
+    // Navigation Logic
+    document.querySelectorAll('.nav-item').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = e.currentTarget.dataset.target;
+            if (!targetId) return;
+
+            // Update active state in sidebar
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+
+            // Switch views
+            document.querySelectorAll('.view-section').forEach(view => view.classList.add('hidden'));
+            document.getElementById(targetId).classList.remove('hidden');
+        });
+    });
+
+    // Add Event Listeners for dashboard filters
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             applyFilter(e.target.dataset.filter);
         });
     });
 
-    // Initial Render (All, sorted by risk)
+    // Initial Renders
     applyFilter('all');
+    renderMerchantsGrid();
+    renderRecentActivity();
 });

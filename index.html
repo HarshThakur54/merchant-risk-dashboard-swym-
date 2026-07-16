@@ -21,15 +21,15 @@
                 <h2>ChurnGuard</h2>
             </div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item active">
+                <a href="#" class="nav-item active" data-target="view-dashboard">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     Dashboard
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-target="view-merchants">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     Merchants
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-target="view-recent">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     Recent Activity
                 </a>
@@ -38,43 +38,72 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="header">
-                <div>
-                    <h1>Merchant Risk Analysis</h1>
-                    <p class="subtitle">Monitor and prevent merchant churn</p>
-                </div>
-                <div class="header-actions">
-                    <div class="stat-badge">
-                        <span id="high-risk-count">0</span> High Risk
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section active">
+                <header class="header">
+                    <div>
+                        <h1>Merchant Risk Analysis</h1>
+                        <p class="subtitle">Monitor and prevent merchant churn</p>
                     </div>
-                </div>
-            </header>
+                    <div class="header-actions">
+                        <div class="stat-badge">
+                            <span id="high-risk-count">0</span> High Risk
+                        </div>
+                    </div>
+                </header>
 
-            <div class="table-container">
-                <div class="table-header">
-                    <h3>Active Merchants</h3>
-                    <div class="filter-group">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="High">High Risk</button>
-                        <button class="filter-btn" data-filter="Medium">Medium Risk</button>
-                        <button class="filter-btn" data-filter="Low">Low Risk</button>
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Active Merchants</h3>
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="High">High Risk</button>
+                            <button class="filter-btn" data-filter="Medium">Medium Risk</button>
+                            <button class="filter-btn" data-filter="Low">Low Risk</button>
+                        </div>
                     </div>
+                    
+                    <table class="merchant-table">
+                        <thead>
+                            <tr>
+                                <th>Merchant</th>
+                                <th>Plan & MRR</th>
+                                <th>Health Metrics</th>
+                                <th>Risk Level</th>
+                                <th>Recommended Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="merchant-table-body">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
                 </div>
-                
-                <table class="merchant-table">
-                    <thead>
-                        <tr>
-                            <th>Merchant</th>
-                            <th>Plan & MRR</th>
-                            <th>Health Metrics</th>
-                            <th>Risk Level</th>
-                            <th>Recommended Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="merchant-table-body">
-                        <!-- Rows injected via JS -->
-                    </tbody>
-                </table>
+            </div>
+
+            <!-- VIEW: MERCHANTS -->
+            <div id="view-merchants" class="view-section hidden">
+                <header class="header">
+                    <div>
+                        <h1>All Merchants</h1>
+                        <p class="subtitle">Complete directory of your merchant base</p>
+                    </div>
+                </header>
+                <div class="merchants-grid" id="merchants-grid-body">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- VIEW: RECENT ACTIVITY -->
+            <div id="view-recent" class="view-section hidden">
+                <header class="header">
+                    <div>
+                        <h1>Recent Activity</h1>
+                        <p class="subtitle">Log of all actions taken by Customer Success</p>
+                    </div>
+                </header>
+                <div class="activity-feed" id="activity-feed-body">
+                    <!-- Populated by JS -->
+                </div>
             </div>
         </main>
     </div>
